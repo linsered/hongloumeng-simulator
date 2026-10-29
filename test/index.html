@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>红楼梦模拟器 - 功能测试</title>
+    <style>
+        body { font-family: 'Microsoft YaHei', sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; background: #1a0a0a; color: #e8d8c8; }
+        h1, h2 { color: #d4a030; }
+        .test-suite { margin-bottom: 30px; }
+        .test-case { padding: 10px; margin: 5px 0; border: 1px solid #5c3030; border-radius: 4px; }
+        .pass { border-left: 4px solid #4caf50; }
+        .fail { border-left: 4px solid #f44336; }
+        .pass .result { color: #81c784; }
+        .fail .result { color: #ef5350; }
+        .result { font-weight: bold; }
+        #summary { padding: 15px; background: #2a1515; border-radius: 8px; margin-bottom: 20px; }
+        button { padding: 10px 20px; background: #8b0000; color: #d4a030; border: 1px solid #c41e3a; border-radius: 4px; cursor: pointer; font-size: 1em; margin: 5px; }
+        button:hover { background: #c41e3a; }
+        #output { white-space: pre-wrap; font-family: monospace; font-size: 0.9em; background: #0a0505; padding: 15px; border-radius: 4px; max-height: 400px; overflow-y: auto; }
+    </style>
+</head>
+<body>
+    <h1>红楼梦模拟器 - 功能测试套件</h1>
+    <div id="summary">
+        <p>总测试数: <span id="total">0</span></p>
+        <p>通过: <span id="passed" style="color:#81c784;">0</span></p>
+        <p>失败: <span id="failed" style="color:#ef5350;">0</span></p>
+    </div>
+    <button onclick="runAllTests()">运行所有测试</button>
+    <button onclick="runCoreTests()">核心系统测试</button>
+    <button onclick="runDataTests()">数据完整性测试</button>
+    <div id="output"></div>
+
+    <script src="../src/js/core/state.js"></script>
+    <script src="../src/js/core/storage.js"></script>
+    <script src="../src/js/data/scenes.js"></script>
+    <script src="../src/js/data/characters.js"></script>
+    <script src="../src/js/data/stories.js"></script>
+    <script src="../src/js/data/events.js"></script>
+    <script src="../src/js/data/achievements.js"></script>
+
+    <script>
+    var results = { total: 0, passed: 0, failed: 0 };
+
+    function assert(condition, testName) {
+        results.total++;
+        if (condition) {
+            results.passed++;
+            output('✅ 通过: ' + testName);
+        } else {
+            results.failed++;
+            output('❌ 失败: ' + testName);
+        }
+        updateSummary();
+    }
+
+    function output(text) {
+        var el = document.getElementById('output');
+        el.textContent += text + '\n';
+        el.scrollTop = el.scrollHeight;
+    }
+
+    function updateSummary() {
+        document.getElementById('total').textContent = results.total;
+        document.getElementById('passed').textContent = results.passed;
+        document.getElementById('failed').textContent = results.failed;
+    }
+
+    function runCoreTests() {
+        results = { total: 0, passed: 0, failed: 0 };
+        document.getElementById('output').textContent = '';
+        output('=== 核心系统测试 ===\n');
+
+        output('\n--- 状态管理系统 ---');
+        HLM.State.init();
+        assert(HLM.State.get('screen') === 'loading', '初始屏幕状态为loading');
+        HLM.State.set('chapter', 3);
+        assert(HLM.State.get('chapter') === 3, '设置和获取章节号');
+        HLM.State.increment('chapter');
+        assert(HLM.State.get('chapter') === 4, '递增章节号');
+        assert(HLM.State.checkCondition({ chapter: { min: 3 } }), '条件判断: chapter >= 3');
+        assert(!HLM.State.checkCondition({ chapter: { min: 10 } }), '条件判断: chapter < 10');
+        HLM.State.applyEffects({ 'attributes.wisdom': { add: 3 } });
+        assert(HLM.State.get('attributes.wisdom') === 8, '应用效果: wisdom + 3');
+
+        output('\n--- 存储系统 ---');
+        var saveResult = HLM.Storage.save(1, { screen: 'test', chapter: 5 });
+        assert(saveResult === true, '保存存档');
+        var loadData = HLM.Storage.load(1);
+        assert(loadData !== null, '读取存档');
+        assert(loadData.state.chapter === 5, '存档数据完整性');
+        HLM.Storage.deleteSave(1);
+        assert(HLM.Storage.load(1) === null, '删除存档');
+
+        output('\n--- 条件系统 ---');
+        HLM.State.init();
+        assert(HLM.State.checkCondition({}), '空条件始终为真');
+        assert(HLM.State.checkCondition(null), 'null条件为真');
+        HLM.State.set('flags.test_flag', true);
+        assert(HLM.State.checkCondition({ 'flags.test_flag': true }), '标志条件判断');
+
+        output('\n=== 核心系统测试完成 ===\n');
+    }
+
+    function runDataTests() {
+        results = { total: 0, passed: 0, failed: 0 };
+        document.getElementById('output').textContent = '';
+        output('=== 数据完整性测试 ===\n');
+
+        output('\n--- 角色数据 ---');
+        var charCount = Object.keys(HLM.CharacterData).length;
+        assert(charCount >= 10, '角色数量 >= 10 (实际: ' + charCount + ')');
+        for (var id in HLM.CharacterData) {
+            var ch = HLM.CharacterData[id];
+            assert(ch.name && ch.name.length > 0, id + ': 有名称');
+            assert(ch.background && ch.background.length >= 300, id + ': 背景故事 >= 300字 (实际: ' + (ch.background ? ch.background.length : 0) + ')');
+            assert(ch.attributes && Object.keys(ch.attributes).length === 6, id + ': 6项属性');
+            assert(ch.storylines && ch.storylines.length >= 2, id + ': 至少2条剧情线 (实际: ' + (ch.storylines ? ch.storylines.length : 0) + ')');
+            assert(ch.startNode, id + ': 有起始节点');
+        }
+
+        output('\n--- 场景数据 ---');
+        var sceneCount = Object.keys(HLM.SceneData).length;
+        assert(sceneCount >= 15, '场景数量 >= 15 (实际: ' + sceneCount + ')');
+        for (var sid in HLM.SceneData) {
+            var scene = HLM.SceneData[sid];
+            assert(scene.name && scene.name.length > 0, sid + ': 有名称');
+            assert(scene.gradient || scene.backgroundColor, sid + ': 有背景样式');
+        }
+
+        output('\n--- 剧情数据 ---');
+        var storyCount = Object.keys(HLM.StoryData).length;
+        assert(storyCount >= 50, '剧情节点 >= 50 (实际: ' + storyCount + ')');
+        for (var nid in HLM.StoryData) {
+            var node = HLM.StoryData[nid];
+            assert(node.text && node.text.length > 0, nid + ': 有文本内容');
+        }
+
+        output('\n--- 事件数据 ---');
+        assert(HLM.EventData.length >= 100, '事件数量 >= 100 (实际: ' + HLM.EventData.length + ')');
+        var typeCount = { character_interaction: 0, environment: 0, seasonal: 0, hidden: 0 };
+        HLM.EventData.forEach(function(evt) {
+            if (typeCount[evt.type] !== undefined) typeCount[evt.type]++;
+            assert(evt.id && evt.name && evt.text, '事件 ' + evt.id + ': 有基本字段');
+            assert(evt.probability > 0 && evt.probability <= 1, '事件 ' + evt.id + ': 概率在0-1之间');
+        });
+        assert(typeCount.character_interaction >= 20, '人物互动事件 >= 20 (实际: ' + typeCount.character_interaction + ')');
+        assert(typeCount.environment >= 15, '环境探索事件 >= 15 (实际: ' + typeCount.environment + ')');
+        assert(typeCount.seasonal >= 15, '季节性事件 >= 15 (实际: ' + typeCount.seasonal + ')');
+        assert(typeCount.hidden >= 20, '隐藏触发事件 >= 20 (实际: ' + typeCount.hidden + ')');
+
+        output('\n--- 成就数据 ---');
+        assert(HLM.AchievementData.length >= 30, '成就数量 >= 30 (实际: ' + HLM.AchievementData.length + ')');
+        var categoryCount = {};
+        HLM.AchievementData.forEach(function(ach) {
+            categoryCount[ach.category] = (categoryCount[ach.category] || 0) + 1;
+            assert(ach.id && ach.name && ach.description, '成就 ' + ach.id + ': 有基本字段');
+            assert(['bronze', 'silver', 'gold', 'platinum'].indexOf(ach.tier) !== -1, '成就 ' + ach.id + ': 有效等级');
+        });
+        assert(Object.keys(categoryCount).length >= 4, '成就分类 >= 4 (实际: ' + Object.keys(categoryCount).length + ')');
+
+        output('\n=== 数据完整性测试完成 ===\n');
+    }
+
+    function runAllTests() {
+        runCoreTests();
+        output('\n');
+        runDataTests();
+        output('\n=== 所有测试完成 ===');
+        output('总计: ' + results.total + ' | 通过: ' + results.passed + ' | 失败: ' + results.failed);
+    }
+    </script>
+</body>
+</html>

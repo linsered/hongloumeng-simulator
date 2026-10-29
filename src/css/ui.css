@@ -1,0 +1,274 @@
+:root {
+    --ui-radius: 6px;
+    --ui-radius-lg: 12px;
+    --ui-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    --ui-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.6);
+    --ui-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --ui-border: 1px solid var(--color-border);
+    --ui-border-gold: 1px solid var(--color-gold);
+}
+
+.scrollbar-custom::-webkit-scrollbar {
+    width: 6px;
+}
+.scrollbar-custom::-webkit-scrollbar-track {
+    background: var(--color-bg-dark);
+}
+.scrollbar-custom::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 3px;
+}
+.scrollbar-custom::-webkit-scrollbar-thumb:hover {
+    background: var(--color-border-light);
+}
+
+.panel-content,
+.log-entries,
+.save-slots,
+.character-grid {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border) var(--color-bg-dark);
+}
+
+.tooltip {
+    position: relative;
+}
+.tooltip::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 6px 12px;
+    background: var(--color-bg-medium);
+    color: var(--color-text);
+    border: var(--ui-border);
+    border-radius: var(--ui-radius);
+    font-size: 0.8em;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    z-index: 200;
+}
+.tooltip:hover::after {
+    opacity: 1;
+}
+
+.notification {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-100px);
+    padding: 12px 24px;
+    background: var(--color-bg-medium);
+    border: var(--ui-border-gold);
+    border-radius: var(--ui-radius);
+    color: var(--color-gold);
+    font-family: var(--font-body);
+    z-index: 1000;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--ui-shadow-lg);
+}
+.notification.show {
+    transform: translateX(-50%) translateY(0);
+}
+
+.progress-bar {
+    width: 100%;
+    height: 6px;
+    background: var(--color-bg-dark);
+    border-radius: 3px;
+    overflow: hidden;
+}
+.progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--color-primary), var(--color-gold));
+    border-radius: 3px;
+    transition: width 0.5s ease;
+}
+
+.badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7em;
+    font-weight: bold;
+}
+.badge-bronze {
+    background: rgba(205, 127, 50, 0.2);
+    color: #cd7f32;
+    border: 1px solid #cd7f32;
+}
+.badge-silver {
+    background: rgba(192, 192, 192, 0.2);
+    color: #c0c0c0;
+    border: 1px solid #c0c0c0;
+}
+.badge-gold {
+    background: rgba(255, 215, 0, 0.2);
+    color: #ffd700;
+    border: 1px solid #ffd700;
+}
+.badge-platinum {
+    background: rgba(229, 228, 226, 0.2);
+    color: #e5e4e2;
+    border: 1px solid #e5e4e2;
+    text-shadow: 0 0 5px rgba(229, 228, 226, 0.5);
+}
+
+.divider {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--color-border), transparent);
+    margin: 15px 0;
+}
+
+.tag {
+    display: inline-block;
+    padding: 3px 10px;
+    background: var(--color-bg-dark);
+    border: var(--ui-border);
+    border-radius: 12px;
+    font-size: 0.75em;
+    color: var(--color-text-dim);
+}
+
+.btn-group {
+    display: flex;
+    gap: 8px;
+}
+.btn-group-vertical {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 500;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+.modal-overlay.active {
+    opacity: 1;
+}
+.modal-content {
+    background: var(--color-bg-medium);
+    border: var(--ui-border-gold);
+    border-radius: var(--ui-radius-lg);
+    padding: 30px;
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    transform: scale(0.9);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.modal-overlay.active .modal-content {
+    transform: scale(1);
+}
+
+.toast-container {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    z-index: 600;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.toast {
+    padding: 12px 20px;
+    background: var(--color-bg-medium);
+    border: var(--ui-border);
+    border-radius: var(--ui-radius);
+    color: var(--color-text);
+    font-size: 0.9em;
+    box-shadow: var(--ui-shadow);
+    animation: toastIn 0.3s ease, toastOut 0.3s ease 2.7s forwards;
+    max-width: 300px;
+}
+.toast-success {
+    border-color: #4caf50;
+    color: #81c784;
+}
+.toast-warning {
+    border-color: #ff9800;
+    color: #ffb74d;
+}
+.toast-error {
+    border-color: #f44336;
+    color: #ef5350;
+}
+@keyframes toastIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+@keyframes toastOut {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(100%); opacity: 0; }
+}
+
+.stat-card {
+    background: var(--color-bg-dark);
+    border: var(--ui-border);
+    border-radius: var(--ui-radius);
+    padding: 12px;
+    text-align: center;
+}
+.stat-card .stat-value {
+    font-size: 1.5em;
+    color: var(--color-gold);
+    font-weight: bold;
+}
+.stat-card .stat-label {
+    font-size: 0.8em;
+    color: var(--color-text-dim);
+    margin-top: 4px;
+}
+
+.tab-bar {
+    display: flex;
+    border-bottom: 1px solid var(--color-border);
+    margin-bottom: 15px;
+}
+.tab-item {
+    padding: 10px 20px;
+    background: transparent;
+    color: var(--color-text-dim);
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    font-family: var(--font-body);
+    transition: var(--ui-transition);
+}
+.tab-item:hover {
+    color: var(--color-text);
+}
+.tab-item.active {
+    color: var(--color-gold);
+    border-bottom-color: var(--color-gold);
+}
+
+@media (max-width: 768px) {
+    .modal-content {
+        padding: 20px;
+        width: 95%;
+    }
+    .toast-container {
+        right: 10px;
+        left: 10px;
+    }
+    .toast {
+        max-width: 100%;
+    }
+}

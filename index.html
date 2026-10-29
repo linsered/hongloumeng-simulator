@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="红楼梦模拟器 - 沉浸式红楼梦原著体验网页游戏">
+    <title>红楼梦模拟器</title>
+    <link rel="stylesheet" href="src/css/main.css">
+    <link rel="stylesheet" href="src/css/ui.css">
+    <link rel="stylesheet" href="src/css/scenes.css">
+    <link rel="stylesheet" href="src/css/characters.css">
+    <link rel="stylesheet" href="src/css/animations.css">
+</head>
+<body>
+    <div id="game-container">
+        <div id="loading-screen" class="screen active">
+            <div class="loading-content">
+                <div class="loading-title">
+                    <span class="title-char">红</span>
+                    <span class="title-char">楼</span>
+                    <span class="title-char">梦</span>
+                    <span class="title-char">模</span>
+                    <span class="title-char">拟</span>
+                    <span class="title-char">器</span>
+                </div>
+                <div class="loading-subtitle">满纸荒唐言 一把辛酸泪</div>
+                <div class="loading-bar-container">
+                    <div class="loading-bar" id="loading-bar"></div>
+                </div>
+                <div class="loading-text" id="loading-text">正在加载资源...</div>
+            </div>
+            <div class="loading-particles" id="loading-particles"></div>
+        </div>
+
+        <div id="main-menu" class="screen">
+            <div class="menu-background"></div>
+            <div class="menu-content">
+                <div class="menu-title">
+                    <h1>红楼梦模拟器</h1>
+                    <p class="menu-subtitle">都云作者痴 谁解其中味</p>
+                </div>
+                <div class="menu-buttons">
+                    <button class="menu-btn primary" id="btn-new-game">开始新游戏</button>
+                    <button class="menu-btn" id="btn-continue" disabled>继续游戏</button>
+                    <button class="menu-btn" id="btn-achievements">成就殿堂</button>
+                    <button class="menu-btn" id="btn-ending-collection-menu">结局图鉴</button>
+                    <button class="menu-btn" id="btn-settings">系统设置</button>
+                    <button class="menu-btn" id="btn-about">关于游戏</button>
+                </div>
+                <div class="menu-footer">
+                    <span>版本 1.0.0</span>
+                    <span>|</span>
+                    <span>基于《红楼梦》原著</span>
+                </div>
+            </div>
+            <div class="menu-petals" id="menu-petals"></div>
+        </div>
+
+        <div id="character-select" class="screen">
+            <div class="screen-header">
+                <button class="back-btn" id="btn-back-from-select">返回</button>
+                <h2>选择你的身份</h2>
+                <div class="header-spacer"></div>
+            </div>
+            <div class="character-select-body">
+                <div class="character-grid" id="character-grid"></div>
+                <div class="character-detail" id="character-detail" style="display:none;">
+                    <div class="detail-portrait" id="detail-portrait"></div>
+                    <div class="detail-info">
+                        <h3 class="detail-name" id="detail-name"></h3>
+                        <p class="detail-title" id="detail-title"></p>
+                        <div class="detail-attributes" id="detail-attributes"></div>
+                        <div class="detail-background" id="detail-background"></div>
+                        <div class="detail-relationships" id="detail-relationships"></div>
+                        <div class="detail-storylines" id="detail-storylines"></div>
+                        <button class="confirm-btn" id="btn-confirm-character">确认选择</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="game-screen" class="screen">
+            <div class="game-header" id="game-header">
+                <div class="header-left">
+                    <button class="icon-btn" id="btn-menu" title="菜单">☰</button>
+                    <span class="chapter-info" id="chapter-info">第一章</span>
+                </div>
+                <div class="header-center">
+                    <span class="scene-name" id="scene-name">大观园</span>
+                </div>
+                <div class="header-right">
+                    <button class="icon-btn" id="btn-save" title="存档">💾</button>
+                    <button class="icon-btn" id="btn-auto" title="自动播放">▶</button>
+                    <button class="icon-btn" id="btn-log" title="对话记录">📜</button>
+                </div>
+            </div>
+
+            <div class="game-main">
+                <div class="scene-container" id="scene-container">
+                    <div class="scene-background" id="scene-background"></div>
+                    <div class="scene-characters" id="scene-characters"></div>
+                    <div class="scene-effects" id="scene-effects"></div>
+                </div>
+
+                <div class="dialogue-container" id="dialogue-container">
+                    <div class="speaker-name" id="speaker-name"></div>
+                    <div class="dialogue-text" id="dialogue-text"></div>
+                    <div class="dialogue-indicator" id="dialogue-indicator">▼</div>
+                </div>
+
+                <div class="choices-container" id="choices-container" style="display:none;"></div>
+            </div>
+
+            <div class="game-footer" id="game-footer">
+                <div class="status-bar">
+                    <div class="status-item" id="status-time">
+                        <span class="status-label">时辰</span>
+                        <span class="status-value">卯时</span>
+                    </div>
+                    <div class="status-item" id="status-season">
+                        <span class="status-label">季节</span>
+                        <span class="status-value">春</span>
+                    </div>
+                    <div class="status-item" id="status-day">
+                        <span class="status-label">日期</span>
+                        <span class="status-value">初一</span>
+                    </div>
+                    <div id="relationship-display"></div>
+                </div>
+                <div class="attribute-bar" id="attribute-bar">
+                    <div class="attr-pill" data-attr="wisdom" title="智慧">
+                        <span class="attr-icon">🧠</span><span class="attr-label-sm">智</span>
+                        <div class="attr-bar-track"><div class="attr-bar-fill" id="attr-wisdom-bar"></div></div>
+                        <span class="attr-val-sm" id="attr-wisdom-val">5</span>
+                    </div>
+                    <div class="attr-pill" data-attr="charm" title="魅力">
+                        <span class="attr-icon">✨</span><span class="attr-label-sm">魅</span>
+                        <div class="attr-bar-track"><div class="attr-bar-fill" id="attr-charm-bar"></div></div>
+                        <span class="attr-val-sm" id="attr-charm-val">5</span>
+                    </div>
+                    <div class="attr-pill" data-attr="talent" title="才华">
+                        <span class="attr-icon">📜</span><span class="attr-label-sm">才</span>
+                        <div class="attr-bar-track"><div class="attr-bar-fill" id="attr-talent-bar"></div></div>
+                        <span class="attr-val-sm" id="attr-talent-val">5</span>
+                    </div>
+                    <div class="attr-pill" data-attr="emotion" title="情感">
+                        <span class="attr-icon">💗</span><span class="attr-label-sm">情</span>
+                        <div class="attr-bar-track"><div class="attr-bar-fill" id="attr-emotion-bar"></div></div>
+                        <span class="attr-val-sm" id="attr-emotion-val">5</span>
+                    </div>
+                    <div class="attr-pill" data-attr="fortune" title="福气">
+                        <span class="attr-icon">🍀</span><span class="attr-label-sm">福</span>
+                        <div class="attr-bar-track"><div class="attr-bar-fill" id="attr-fortune-bar"></div></div>
+                        <span class="attr-val-sm" id="attr-fortune-val">5</span>
+                    </div>
+                    <div class="attr-pill" data-attr="health" title="健康">
+                        <span class="attr-icon">❤️</span><span class="attr-label-sm">健</span>
+                        <div class="attr-bar-track"><div class="attr-bar-fill" id="attr-health-bar"></div></div>
+                        <span class="attr-val-sm" id="attr-health-val">5</span>
+                    </div>
+                </div>
+                <div class="quick-actions">
+                    <button class="quick-btn" id="btn-character-info" title="角色信息">👤</button>
+                    <button class="quick-btn" id="btn-relationship" title="人物关系">🔗</button>
+                    <button class="quick-btn" id="btn-inventory" title="物品栏">🎒</button>
+                    <button class="quick-btn" id="btn-achievement-panel" title="成就">🏆</button>
+                </div>
+            </div>
+
+            <div id="attribute-notifications" class="attribute-notifications"></div>
+
+            <div class="event-popup" id="event-popup" style="display:none;">
+                <div class="event-content">
+                    <div class="event-header" id="event-header"></div>
+                    <div class="event-text" id="event-text"></div>
+                    <div class="event-choices" id="event-choices"></div>
+                </div>
+            </div>
+
+            <div class="achievement-popup" id="achievement-popup" style="display:none;">
+                <div class="achievement-content">
+                    <div class="achievement-icon" id="achievement-icon"></div>
+                    <div class="achievement-info">
+                        <div class="achievement-name" id="achievement-name"></div>
+                        <div class="achievement-desc" id="achievement-desc"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="side-panel" class="side-panel" style="display:none;">
+            <div class="panel-header">
+                <h3 id="panel-title">面板</h3>
+                <button class="close-btn" id="btn-close-panel">✕</button>
+            </div>
+            <div class="panel-content" id="panel-content"></div>
+        </div>
+
+        <div id="settings-screen" class="screen overlay-screen" style="display:none;">
+            <div class="settings-content">
+                <h2>系统设置</h2>
+                <div class="setting-group">
+                    <label>音乐音量</label>
+                    <input type="range" id="setting-bgm-volume" min="0" max="100" value="70">
+                    <span id="bgm-volume-value">70</span>
+                </div>
+                <div class="setting-group">
+                    <label>音效音量</label>
+                    <input type="range" id="setting-sfx-volume" min="0" max="100" value="80">
+                    <span id="sfx-volume-value">80</span>
+                </div>
+                <div class="setting-group">
+                    <label>文字速度</label>
+                    <input type="range" id="setting-text-speed" min="1" max="5" value="3">
+                    <span id="text-speed-value">3</span>
+                </div>
+                <div class="setting-group">
+                    <label>自动播放速度</label>
+                    <input type="range" id="setting-auto-speed" min="1" max="5" value="3">
+                    <span id="auto-speed-value">3</span>
+                </div>
+                <div class="setting-group">
+                    <label>文字大小</label>
+                    <select id="setting-font-size">
+                        <option value="small">小</option>
+                        <option value="medium" selected>中</option>
+                        <option value="large">大</option>
+                    </select>
+                </div>
+                <div class="setting-group">
+                    <label>全屏模式</label>
+                    <button class="toggle-btn" id="btn-fullscreen">关闭</button>
+                </div>
+                <div class="setting-actions">
+                    <button class="menu-btn" id="btn-back-from-settings">返回</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="save-screen" class="screen overlay-screen" style="display:none;">
+            <div class="save-content">
+                <h2>存档管理</h2>
+                <div class="save-tabs">
+                    <button class="tab-btn active" id="tab-save">存档</button>
+                    <button class="tab-btn" id="tab-load">读档</button>
+                </div>
+                <div class="save-slots" id="save-slots"></div>
+                <button class="menu-btn" id="btn-back-from-save">返回</button>
+            </div>
+        </div>
+
+        <div id="dialog-log" class="screen overlay-screen" style="display:none;">
+            <div class="log-content">
+                <h2>对话记录</h2>
+                <div class="log-entries" id="log-entries"></div>
+                <button class="menu-btn" id="btn-back-from-log">返回</button>
+            </div>
+        </div>
+
+        <div id="achievement-screen" class="screen overlay-screen" style="display:none;">
+            <div class="achievement-screen-content">
+                <h2>成就殿堂</h2>
+                <div class="achievement-stats" id="achievement-stats"></div>
+                <div class="achievement-grid" id="achievement-grid"></div>
+                <button class="menu-btn" id="btn-back-from-achievements">返回</button>
+            </div>
+        </div>
+
+        <div id="ending-screen" class="screen" style="display:none;">
+            <div class="ending-screen-bg"></div>
+            <div class="ending-screen-content">
+                <div class="ending-screen-seal">结 局</div>
+                <div class="ending-screen-title" id="ending-screen-title"></div>
+                <div class="ending-screen-divider"></div>
+                <div class="ending-screen-text" id="ending-screen-text"></div>
+                <div class="ending-screen-poem" id="ending-screen-poem"></div>
+                <div class="ending-screen-stats" id="ending-screen-stats"></div>
+                <div class="ending-screen-collection" id="ending-screen-collection"></div>
+                <div class="ending-screen-buttons">
+                    <button class="menu-btn primary" id="btn-ending-restart">重新开始</button>
+                    <button class="menu-btn" id="btn-ending-collection">结局图鉴</button>
+                    <button class="menu-btn" id="btn-ending-menu">返回主菜单</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="ending-collection-screen" class="screen">
+            <div class="ending-collection-content">
+                <div class="ending-collection-header">
+                    <h2>结局图鉴</h2>
+                    <div id="ending-collection-stats"></div>
+                    <button class="menu-btn" id="btn-back-from-ending-collection">返回</button>
+                </div>
+                <div class="ending-collection-grid" id="ending-collection-grid"></div>
+            </div>
+            <div id="ending-detail-popup" class="ending-detail-popup" style="display:none;"></div>
+        </div>
+    </div>
+
+    <script src="src/js/core/state.js"></script>
+    <script src="src/js/core/storage.js"></script>
+    <script src="src/js/core/loader.js"></script>
+    <script src="src/js/core/engine.js"></script>
+    <script src="src/js/data/scenes.js"></script>
+    <script src="src/js/data/characters.js"></script>
+    <script src="src/js/data/stories.js"></script>
+    <script src="src/js/data/events.js"></script>
+    <script src="src/js/data/achievements.js"></script>
+    <script src="src/js/systems/character.js"></script>
+    <script src="src/js/systems/story.js"></script>
+    <script src="src/js/systems/event.js"></script>
+    <script src="src/js/systems/achievement.js"></script>
+    <script src="src/js/systems/ending-collection.js"></script>
+    <script src="src/js/systems/audio.js"></script>
+    <script src="src/js/ui/components.js"></script>
+    <script src="src/js/ui/animations.js"></script>
+    <script src="src/js/app.js"></script>
+</body>
+</html>

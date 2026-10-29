@@ -1,0 +1,179 @@
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+@keyframes slideUp {
+    from { transform: translateY(30px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+@keyframes slideDown {
+    from { transform: translateY(-30px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+@keyframes slideLeft {
+    from { transform: translateX(30px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+@keyframes slideRight {
+    from { transform: translateX(-30px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+@keyframes scaleIn {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+@keyframes scaleOut {
+    from { transform: scale(1.1); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+@keyframes bounceIn {
+    0% { transform: scale(0); opacity: 0; }
+    50% { transform: scale(1.1); }
+    70% { transform: scale(0.95); }
+    100% { transform: scale(1); opacity: 1; }
+}
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+@keyframes glow {
+    0%, 100% { box-shadow: 0 0 5px rgba(212, 160, 48, 0.3); }
+    50% { box-shadow: 0 0 20px rgba(212, 160, 48, 0.6), 0 0 40px rgba(212, 160, 48, 0.3); }
+}
+@keyframes shimmer {
+    0% { background-position: -200% center; }
+    100% { background-position: 200% center; }
+}
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+@keyframes typewriterCursor {
+    0%, 100% { border-right-color: var(--color-gold); }
+    50% { border-right-color: transparent; }
+}
+
+.anim-fade-in { animation: fadeIn 0.5s ease forwards; }
+.anim-fade-out { animation: fadeOut 0.5s ease forwards; }
+.anim-slide-up { animation: slideUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+.anim-slide-down { animation: slideDown 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+.anim-slide-left { animation: slideLeft 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+.anim-slide-right { animation: slideRight 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+.anim-scale-in { animation: scaleIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+.anim-bounce-in { animation: bounceIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+.anim-shake { animation: shake 0.5s ease; }
+.anim-pulse { animation: pulse 2s ease-in-out infinite; }
+.anim-glow { animation: glow 2s ease-in-out infinite; }
+.anim-float { animation: float 3s ease-in-out infinite; }
+
+.anim-delay-1 { animation-delay: 0.1s; }
+.anim-delay-2 { animation-delay: 0.2s; }
+.anim-delay-3 { animation-delay: 0.3s; }
+.anim-delay-4 { animation-delay: 0.4s; }
+.anim-delay-5 { animation-delay: 0.5s; }
+
+.choice-btn {
+    opacity: 0;
+    transform: translateX(-20px);
+    animation: choiceAppear 0.4s ease forwards;
+}
+.choice-btn:nth-child(1) { animation-delay: 0.1s; }
+.choice-btn:nth-child(2) { animation-delay: 0.2s; }
+.choice-btn:nth-child(3) { animation-delay: 0.3s; }
+.choice-btn:nth-child(4) { animation-delay: 0.4s; }
+@keyframes choiceAppear {
+    from { opacity: 0; transform: translateX(-20px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+.achievement-unlock .achievement-content {
+    animation: achievementUnlock 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+@keyframes achievementUnlock {
+    0% { transform: translateX(120%) scale(0.8); opacity: 0; }
+    50% { transform: translateX(-10%) scale(1.05); }
+    100% { transform: translateX(0) scale(1); opacity: 1; }
+}
+
+.event-popup .event-content {
+    animation: eventAppear 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+@keyframes eventAppear {
+    0% { transform: scale(0.7); opacity: 0; }
+    60% { transform: scale(1.05); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.screen-transition {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    z-index: 999;
+    pointer-events: none;
+}
+.screen-transition.fade {
+    animation: screenFade 0.8s ease forwards;
+}
+@keyframes screenFade {
+    0% { opacity: 0; }
+    40% { opacity: 1; }
+    60% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+.particle-burst {
+    position: absolute;
+    pointer-events: none;
+    z-index: 100;
+}
+.particle-burst .particle {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    animation: particleBurst 1s ease-out forwards;
+}
+@keyframes particleBurst {
+    0% { transform: translate(0, 0) scale(1); opacity: 1; }
+    100% { transform: translate(var(--px), var(--py)) scale(0); opacity: 0; }
+}
+
+.ink-splash {
+    position: absolute;
+    pointer-events: none;
+    z-index: 100;
+}
+.ink-splash .ink-drop {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(139, 0, 0, 0.8), rgba(139, 0, 0, 0.2));
+    animation: inkSpread 1.5s ease-out forwards;
+}
+@keyframes inkSpread {
+    0% { transform: scale(0); opacity: 1; }
+    100% { transform: scale(3); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
