@@ -10,9 +10,9 @@
 
 ## 在线试玩
 
-部署到 GitHub Pages 后即可通过浏览器直接游玩（无需下载）：
+🔗 **https://linsered.github.io/hongloumeng-simulator/**
 
-> 链接将在仓库部署完成后更新为：`https://<你的 GitHub 用户名>.github.io/hongloumeng-simulator/`
+点开即玩，无需下载、无需安装。
 
 ---
 
